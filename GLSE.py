@@ -21,6 +21,8 @@ import random
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
 
+from my_tools import keyword_creator
+
 class GoogleScraper:
     def __init__(self):
         self.driver = None
@@ -51,7 +53,23 @@ class GoogleScraper:
         self.initialize_driver()
         self.driver.get(self.link)
 
+    def search_init(self):
+        self.get_link()
+        # Enter the company name in the search bar and search
+        random_number = random.uniform(2, 5)
+        time.sleep(random_number)
+
+        search_box = self.driver.find_element(By.NAME, "q")
+
+        search_box.clear()
+        search_box.send_keys('"Legal Head" OR "VP" OR "AVP" OR "AGM" OR "GM" "MSME" AND "SME" -intitle:"profiles" -inurl:"dir/ " site:in.linkedin.com/in/ OR site:in.linkedin.com/pub/')
+
+        random_number = random.uniform(2, 5)
+        time.sleep(random_number)
+
+        search_box.send_keys(Keys.RETURN)
+
 
 if __name__ == "__main__":
     scraper = GoogleScraper()
-    scraper.get_link()
+    scraper.search_init()
