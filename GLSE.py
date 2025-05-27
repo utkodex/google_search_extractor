@@ -21,7 +21,7 @@ import random
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
 
-from my_tools import keyword_creator
+from my_tools.my_tools import keyword_creator
 
 class GoogleScraper:
     def __init__(self):
