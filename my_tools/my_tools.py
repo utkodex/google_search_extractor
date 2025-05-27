@@ -1,4 +1,5 @@
 import json
+import random
 
 def convert_to_list(keyword_string):
         # Replace "and" with a comma for consistency
@@ -29,8 +30,3 @@ def keyword_creator(position, industry):
     print("Generated Search Query:")
     print(search_query)
     return search_query
-
-# positions = "Legal Head, VP, AVP, AGM, GM"
-# industries = "MSME, SME"
-
-# keyword_creator(positions, industries)
