@@ -23,10 +23,32 @@ from selenium.webdriver.chrome.options import Options
 
 from my_tools.my_tools import keyword_creator
 
+position = "Legal Head, VP, AVP, AGM, GM"
+industry = "MSME, SME"
+from_page = 1
+to_page = 10
+
 class GoogleScraper:
     def __init__(self):
-        self.driver = None
+        # self.driver = None
         self.link = "https://www.google.com/"
+        self.position = position
+        self.industry = industry
+        self.subsheet_title = 'Linkedin Profile MSME'
+        self.from_page = from_page
+        self.to_page = to_page
+
+    def sheet_init(self, subsheet_title):
+        # Google Sheets configuration
+        gc = gspread.service_account(filename='credentials.json')  # Replace with the path to your credentials.json file
+        spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1MV3GXRFBeEUnZ9YxlgJIOlW6y7HOWWC80ugLc_zZPKM/edit?gid=0#gid=0'  # Replace with the URL of your Google Sheet
+
+        # Open the Google Sheet by URL
+        sh = gc.open_by_url(spreadsheet_url)
+
+        # Identify the subsheet by title
+        # subsheet_title = 'Linkedin Profile MSME'  # Replace with the title of your subsheet
+        worksheet = sh.worksheet(subsheet_title)
 
     def initialize_driver(self):
         # Create a fake user-agent
@@ -55,6 +77,7 @@ class GoogleScraper:
 
     def search_init(self):
         self.get_link()
+
         # Enter the company name in the search bar and search
         random_number = random.uniform(2, 5)
         time.sleep(random_number)
@@ -62,14 +85,69 @@ class GoogleScraper:
         search_box = self.driver.find_element(By.NAME, "q")
 
         search_box.clear()
-        search_box.send_keys('"Legal Head" OR "VP" OR "AVP" OR "AGM" OR "GM" "MSME" AND "SME" -intitle:"profiles" -inurl:"dir/ " site:in.linkedin.com/in/ OR site:in.linkedin.com/pub/')
+
+        search_query = keyword_creator(self.position, self.industry)
+        print(search_query)
+
+        search_box.send_keys(search_query)
 
         random_number = random.uniform(2, 5)
         time.sleep(random_number)
 
         search_box.send_keys(Keys.RETURN)
 
+    def scrolls(self):
+
+        random_integer = random.randint(5, 8)
+        for _ in range(random_integer):
+            
+            # Execute JavaScript to scroll down
+            random_number = random.uniform(600, 800)
+            self.driver.execute_script(f"window.scrollBy(0, {random_number});")
+            
+            # Wait for the content to load if applicable
+            random_number = random.uniform(0, 1)
+            time.sleep(random_number)
+
+    def data_scraper(self):
+
+        self.search_init()
+
+        for i in range(self.from_page+1, self.to_page):
+            self.scrolls()
+
+            # Wait for the search results to load
+            google_searchs = WebDriverWait(self.driver, 20).until(
+                EC.presence_of_all_elements_located((By.XPATH, "//div[@class='N54PNb BToiNc']"))
+            )
+            
+            # Iterate through each search result
+            for google_search in google_searchs:
+                try:
+                    # Extract the title of the search result
+                    search_result = google_search.find_element(By.XPATH, ".//h3[@class='LC20lb MBeuO DKV0Md']").text
+                except:
+                    search_result = None
+            
+                try:
+                    # Extract the URL from the search result
+                    ID_link = google_search.find_element(By.XPATH, ".//a[@jsname='UWckNb']").get_attribute("href")
+                except:
+                    ID_link = None
+
+                # Output the collected data
+                print(f"Search Result Title: {search_result}")
+                print(f"URL: {ID_link}")
+                print("=====================================================================")
+
+            print(f"//a[@aria-label='Page {i}']")
+            pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
+            pages.click()
+            
+            random_number = random.uniform(2, 5)
+            time.sleep(random_number)
+
 
 if __name__ == "__main__":
     scraper = GoogleScraper()
-    scraper.search_init()
+    scraper.data_scraper()
