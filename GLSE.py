@@ -50,6 +50,8 @@ class GoogleScraper:
         # subsheet_title = 'Linkedin Profile MSME'  # Replace with the title of your subsheet
         worksheet = sh.worksheet(subsheet_title)
 
+        return worksheet
+
     def initialize_driver(self):
         # Create a fake user-agent
         ua = UserAgent()
@@ -140,12 +142,33 @@ class GoogleScraper:
                 print(f"URL: {ID_link}")
                 print("=====================================================================")
 
+                self.data_uploader(search_result, ID_link)
+
             print(f"//a[@aria-label='Page {i}']")
             pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
             pages.click()
             
             random_number = random.uniform(2, 5)
             time.sleep(random_number)
+
+            # return search_result, ID_link
+
+    def data_uploader(self, search_result, ID_link):
+        worksheet = self.sheet_init(self.subsheet_title)
+
+        data_list = []
+
+        # Append data to the DataFrame
+        data_dict = {
+            'Search Result Title': search_result,
+            'URL': ID_link,
+        }             
+    
+        # Append the dictionary to the list
+        data_list.append(data_dict)
+    
+        # Append data to the Google Sheet
+        worksheet.append_rows([list(data_dict.values())], value_input_option="RAW")
 
 
 if __name__ == "__main__":
