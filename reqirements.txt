@@ -1,0 +1,7 @@
+selenium
+undetected-chromedriver
+webdriver-manager
+streamlit
+gspread
+oauth2client
+fake_useragent
