@@ -18,7 +18,7 @@ import random
 from fake_useragent import UserAgent
 from selenium.webdriver.chrome.options import Options
 
-from my_tools.my_tools import keyword_creator
+from utils.my_tools import keyword_creator
 
 # position = "Legal Head, VP, AVP, AGM, GM"
 # industry = "MSME, SME"
@@ -86,7 +86,7 @@ class GoogleScraper:
         search_box.clear()
 
         search_query = keyword_creator(self.position, self.industry)
-        print(search_query)
+        print("Search Query:", search_query)
 
         search_box.send_keys(search_query)
 
