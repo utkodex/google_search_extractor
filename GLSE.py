@@ -9,10 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 import time
-import pandas as pd
-from pandas import DataFrame
 from datetime import datetime
-import pyperclip
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 # from cred import linkedin_username, linkedin_password  # Importing credentials
@@ -23,13 +20,13 @@ from selenium.webdriver.chrome.options import Options
 
 from my_tools.my_tools import keyword_creator
 
-position = "Legal Head, VP, AVP, AGM, GM"
-industry = "MSME, SME"
-from_page = 1
-to_page = 10
+# position = "Legal Head, VP, AVP, AGM, GM"
+# industry = "MSME, SME"
+# from_page = 1
+# to_page = 10
 
 class GoogleScraper:
-    def __init__(self):
+    def __init__(self, position=None, industry=None, from_page=None, to_page=None):
         # self.driver = None
         self.link = "https://www.google.com/"
         self.position = position
@@ -148,8 +145,10 @@ class GoogleScraper:
             pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
             pages.click()
             
-            random_number = random.uniform(2, 5)
+            random_number = random.uniform(0.5, 1)
             time.sleep(random_number)
+
+            self.bot_informer(i)
 
             # return search_result, ID_link
 
@@ -170,6 +169,23 @@ class GoogleScraper:
         # Append data to the Google Sheet
         worksheet.append_rows([list(data_dict.values())], value_input_option="RAW")
 
+    def bot_informer(self, i):
+        from_page = i-1
+        print(from_page)
+
+        body_text = self.driver.find_element(By.TAG_NAME, "body").text
+        if "Our systems have detected unusual traffic from your computer network" in body_text:
+            
+            print(f"The scraping stoped because of Bot checkbox. Please start again with page no. {from_page}")
+            time.sleep(5)
+            self.driver.quit()
+
+            # Update the from_page attribute
+            self.from_page = from_page
+            self.data_scraper()
+
+        else:
+            print("not here")
 
 if __name__ == "__main__":
     scraper = GoogleScraper()
