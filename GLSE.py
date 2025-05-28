@@ -135,11 +135,12 @@ class GoogleScraper:
                     ID_link = None
 
                 # Output the collected data
+                print(f"Page No.: {i-1}")
                 print(f"Search Result Title: {search_result}")
                 print(f"URL: {ID_link}")
                 print("=====================================================================")
 
-                self.data_uploader(search_result, ID_link)
+                self.data_uploader(i, search_result, ID_link)
 
             print(f"//a[@aria-label='Page {i}']")
             pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
@@ -152,13 +153,14 @@ class GoogleScraper:
 
             # return search_result, ID_link
 
-    def data_uploader(self, search_result, ID_link):
+    def data_uploader(self, i, search_result, ID_link):
         worksheet = self.sheet_init(self.subsheet_title)
 
         data_list = []
 
         # Append data to the DataFrame
         data_dict = {
+            'Page No.': i-1,
             'Search Result Title': search_result,
             'URL': ID_link,
         }             
