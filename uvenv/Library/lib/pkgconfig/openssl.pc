@@ -1,0 +1,9 @@
+prefix=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library 
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Requires: libssl libcrypto
+Version: 3.0.16 

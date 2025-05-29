@@ -14,8 +14,3 @@ def keyword_creator(position, industry):
     print(query)
 
     return query
-
-
-# position = "Legal Head, VP, AVP, AGM, GM, bgp"
-# industry = "MSME, SME"
-# keyword_creator(position, industry)

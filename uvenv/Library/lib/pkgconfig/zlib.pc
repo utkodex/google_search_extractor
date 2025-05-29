@@ -1,0 +1,13 @@
+prefix=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library
+exec_prefix=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library
+libdir=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library/lib
+sharedlibdir=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library/lib
+includedir=C:/Users/Utkarsh/Downloads/Coding/Tut/Lawsikho Projects/Google_linkedin_scraper/final_project/uvenv/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
