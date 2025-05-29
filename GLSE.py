@@ -65,7 +65,7 @@ class GoogleScraper:
         options.add_argument("--disable-offline-load-stale-cache")
         options.add_argument("--disk-cache-size=0")
         # Uncomment if you want headless mode
-        options.add_argument("--headless=new")
+        # options.add_argument("--headless=new")
 
         # Initialize undetected-chromedriver
         self.driver = uc.Chrome(version_main=136, options=options)
@@ -90,10 +90,10 @@ class GoogleScraper:
 
         search_box.send_keys(search_query)
 
-        random_number = random.uniform(2, 5)
-        time.sleep(random_number)
-
         search_box.send_keys(Keys.RETURN)
+
+        random_number = random.uniform(1, 2)
+        time.sleep(random_number)
 
     def scrolls(self):
 
@@ -108,12 +108,51 @@ class GoogleScraper:
             random_number = random.uniform(0, 1)
             time.sleep(random_number)
 
+    def page_skipper(self):
+        try:
+            # Wait for the element to be present
+            page_box_xpath = "//table[@role='presentation']"
+            page_box = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, page_box_xpath)))
+            pagination_text = page_box.text
+            
+            # Split the text by newline character and filter out non-numeric values
+            numbers = [int(num) for num in pagination_text.split("\n") if num.isdigit()]
+            
+            # Get the greatest number
+            greatest_page_number = max(numbers)
+            
+            # Print the greatest page number
+            print("The greatest page number is:", greatest_page_number)
+            
+            while self.from_page > greatest_page_number:
+            
+                try:
+                    next_page_button = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, f"//a[@aria-label='Page {greatest_page_number}']")))
+                    next_page_button.click()
+                    greatest_page_number += 1
+                except TimeoutException:
+                    print("No more pages available.")
+                    break
+                    
+        except TimeoutException:
+                print("Pagination element not found")
+
     def data_scraper(self):
 
         self.search_init()
+        self.page_skipper()
 
-        for i in range(self.from_page+1, self.to_page):
+        for i in range(self.from_page, self.to_page+1):
             self.scrolls()
+
+            if i > 1:  # Skip clicking next page button if page number is 1
+                next_page_xpath = f"//a[@aria-label='Page {i}']"
+                try:
+                    next_page_button = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, next_page_xpath)))
+                    next_page_button.click()
+                except TimeoutException:
+                    print("No more pages available.")
+                    break  
 
             # Wait for the search results to load
             google_searchs = WebDriverWait(self.driver, 20).until(
@@ -135,16 +174,16 @@ class GoogleScraper:
                     ID_link = None
 
                 # Output the collected data
-                print(f"Page No.: {i-1}")
+                print(f"Page No.: {i}")
                 print(f"Search Result Title: {search_result}")
                 print(f"URL: {ID_link}")
                 print("=====================================================================")
 
                 self.data_uploader(i, search_result, ID_link)
 
-            print(f"//a[@aria-label='Page {i}']")
-            pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
-            pages.click()
+            # print(f"//a[@aria-label='Page {i}']")
+            # pages = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, f"//a[@aria-label='Page {i}']")))
+            # pages.click()
             
             random_number = random.uniform(0.5, 1)
             time.sleep(random_number)
@@ -160,7 +199,7 @@ class GoogleScraper:
 
         # Append data to the DataFrame
         data_dict = {
-            'Page No.': i-1,
+            'Page No.': i,
             'Search Result Title': search_result,
             'URL': ID_link,
         }             
