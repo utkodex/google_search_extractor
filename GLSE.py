@@ -65,7 +65,7 @@ class GoogleScraper:
         options.add_argument("--disable-offline-load-stale-cache")
         options.add_argument("--disk-cache-size=0")
         # Uncomment if you want headless mode
-        # options.add_argument("--headless=new")
+        options.add_argument("--headless=new")
 
         # Initialize undetected-chromedriver
         self.driver = uc.Chrome(version_main=136, options=options)
