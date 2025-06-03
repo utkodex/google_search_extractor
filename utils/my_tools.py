@@ -11,6 +11,6 @@ def keyword_creator(position, industry):
     query = f"{positions_query} {industries_query} -intitle:\"profiles\" -inurl:\"dir/ \" site:in.linkedin.com/in/ OR site:in.linkedin.com/pub/"
 
     # Output the query
-    print(query)
+    # print(query)
 
     return query
